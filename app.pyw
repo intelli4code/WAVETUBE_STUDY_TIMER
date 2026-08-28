@@ -178,7 +178,7 @@ class WaveTubeHandler(SimpleHTTPRequestHandler):
 
         # Static files serving
         if path in ('/', ''):
-            self.path = '/wavetube_youtube_audio_player.html'
+            self.path = '/index.html'
         
         return super().do_GET()
 
@@ -392,7 +392,7 @@ def main():
     threading.Thread(target=watchdog, daemon=True).start()
     
     # Launch browser window after small delay
-    url = f"http://127.0.0.1:{PORT}/wavetube_youtube_audio_player.html"
+    url = f"http://127.0.0.1:{PORT}/index.html"
     threading.Timer(0.3, launch_browser, args=[url]).start()
     
     try:
