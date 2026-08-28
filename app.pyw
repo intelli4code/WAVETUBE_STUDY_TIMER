@@ -10,6 +10,12 @@ import subprocess
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
+try:
+    import yt_dlp
+    HAS_YTDLP = True
+except ImportError:
+    HAS_YTDLP = False
+
 # Directory containing this script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir(BASE_DIR)
@@ -19,6 +25,45 @@ PORT = 8765
 last_heartbeat = time.time()
 server_instance = None
 shutdown_requested = False
+stream_cache = {}
+
+def extract_direct_audio(youtube_id):
+    """Extract direct audio stream URL using yt-dlp to bypass embedding restrictions."""
+    if not HAS_YTDLP or not youtube_id:
+        return None
+    
+    # Check cache (15 minute TTL)
+    cached = stream_cache.get(youtube_id)
+    if cached and time.time() - cached.get('timestamp', 0) < 900:
+        return cached
+
+    url = f"https://www.youtube.com/watch?v={youtube_id}"
+    ydl_opts = {
+        'format': 'bestaudio[ext=m4a]/bestaudio/best',
+        'quiet': True,
+        'no_warnings': True,
+        'extract_flat': False,
+        'skip_download': True
+    }
+    
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            stream_url = info.get('url')
+            if stream_url:
+                result = {
+                    'stream_url': stream_url,
+                    'title': info.get('title', f"Track ({youtube_id})"),
+                    'author': info.get('uploader') or info.get('channel') or "YouTube",
+                    'duration': info.get('duration', 0),
+                    'timestamp': time.time()
+                }
+                stream_cache[youtube_id] = result
+                return result
+    except Exception as e:
+        print(f"Direct stream extraction error for {youtube_id}:", e)
+    
+    return None
 
 # ==============================================================================
 # SQLite Database Setup & Migrations
@@ -175,6 +220,34 @@ class WaveTubeHandler(SimpleHTTPRequestHandler):
                 cursor.execute("SELECT key, value FROM settings")
                 settings = {row['key']: row['value'] for row in cursor.fetchall()}
             return self.send_json({"settings": settings})
+
+        # --- GET /api/stream (Bypass Embedding Restrictions) ---
+        if path in ('/api/stream', '/api/stream/'):
+            params = parse_qs(parsed_url.query)
+            youtube_id = (params.get('v') or params.get('id') or [''])[0].strip()
+            
+            if not youtube_id:
+                return self.send_json({"error": "Missing video ID (v=...)"}, status=400)
+            
+            result = extract_direct_audio(youtube_id)
+            if result:
+                return self.send_json({"success": True, **result})
+            else:
+                return self.send_json({"error": "Could not extract direct audio stream for this video."}, status=404)
+
+        # --- GET /api/stream/audio (Direct Audio Redirect / Proxy) ---
+        if path.startswith('/api/stream/audio'):
+            params = parse_qs(parsed_url.query)
+            youtube_id = (params.get('v') or params.get('id') or [''])[0].strip()
+            result = extract_direct_audio(youtube_id)
+            if result and result.get('stream_url'):
+                self.send_response(302)
+                self.send_header('Location', result['stream_url'])
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                return
+            else:
+                return self.send_json({"error": "Audio stream unavailable."}, status=404)
 
         # Static files serving
         if path in ('/', ''):
