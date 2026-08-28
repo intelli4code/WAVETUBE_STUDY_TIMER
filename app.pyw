@@ -30,6 +30,14 @@ stream_cache = {}
 
 def proxy_audio_stream(handler, stream_url):
     """Proxy audio stream with HTTP Range support and CORS headers to enable full Web Audio API FFT."""
+    _proxy_stream(handler, stream_url, content_type_fallback='audio/webm')
+
+def proxy_video_stream(handler, stream_url):
+    """Proxy video stream with HTTP Range support, proper MIME type for HTML5 video element."""
+    _proxy_stream(handler, stream_url, content_type_fallback='video/mp4')
+
+def _proxy_stream(handler, stream_url, content_type_fallback='audio/webm'):
+    """Generic streaming proxy with Range support."""
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -45,8 +53,11 @@ def proxy_audio_stream(handler, stream_url):
             status_code = upstream.status or 200
             handler.send_response(status_code)
             
-            # Forward headers
-            content_type = upstream.headers.get('Content-Type', 'audio/webm')
+            # Forward headers — override Content-Type to correct type
+            content_type = upstream.headers.get('Content-Type', content_type_fallback)
+            # Ensure video streams get proper video MIME type for HTML5 <video>
+            if content_type_fallback.startswith('video') and 'audio' in content_type:
+                content_type = content_type_fallback
             handler.send_header('Content-Type', content_type)
             handler.send_header('Accept-Ranges', 'bytes')
             handler.send_header('Access-Control-Allow-Origin', '*')
@@ -73,7 +84,7 @@ def proxy_audio_stream(handler, stream_url):
     except (ConnectionResetError, BrokenPipeError):
         pass
     except Exception as e:
-        print("Audio proxy streaming error:", e)
+        print("Stream proxy error:", e)
 
 def extract_direct_audio(youtube_id):
     """Extract direct audio stream URL using yt-dlp to bypass embedding restrictions."""
@@ -390,7 +401,7 @@ class WaveTubeHandler(SimpleHTTPRequestHandler):
             youtube_id = (params.get('v') or params.get('id') or [''])[0].strip()
             result = extract_direct_video(youtube_id)
             if result and result.get('stream_url'):
-                return proxy_audio_stream(self, result['stream_url'])
+                return proxy_video_stream(self, result['stream_url'])
             else:
                 return self.send_json({"error": "Video stream unavailable."}, status=404)
 

@@ -235,6 +235,12 @@
       display: block !important;
       background: #000000 !important;
     }
+    /* Always hide YouTube iframe container in video mode - prevents error 150 overlay */
+    .player-dock.video-mode #ytWrapper {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
     .player-dock iframe, .player-dock #youtubePlayer, .player-dock video {
       width: 100% !important;
       height: 100% !important;
@@ -1938,20 +1944,10 @@
       track.errorCode = null;
       errorRetryCount = 0;
 
-      // In Video Mode, try YouTube video player
-      if (state.settings.videoMode && ytReady && player) {
-        try {
-          if (typeof player.loadVideoById === "function") {
-            player.loadVideoById(track.youtubeId, 0);
-            player.playVideo();
-          } else if (typeof player.playVideo === "function") {
-            player.playVideo();
-          }
-          applySettingsToPlayer();
-          updateHeaderDisplay();
-          renderPlaylist();
-          return;
-        } catch (e) {}
+      // In Video Mode, ALWAYS use direct stream bypass (never YouTube iframe which triggers error 150)
+      if (state.settings.videoMode) {
+        playViaDirectStreamBypass(state.activeIndex);
+        return;
       }
 
       // Default high-performance engine: Direct Stream Bypass (Zero CORS, 100% FFT, No Error 150)
@@ -2143,14 +2139,9 @@
       }
 
       // Codes 150 / 101 / 153 / 2 / 100: YouTube embed disabled by owner on external sites
-      // Automatically activate Direct Stream Bypass so audio continues seamlessly!
+      // Automatically activate Direct Stream Bypass so audio+video continues seamlessly!
       console.log(`YouTube embed restricted (Code ${code}). Falling back to Direct Stream Bypass...`);
       playViaDirectStreamBypass(state.activeIndex);
-
-      // If user was viewing in video mode, inform them that direct audio is streaming
-      if (state.settings.videoMode) {
-        showRestriction(`Video embedding disabled by owner on external websites (Notice ${code}). Direct audio is streaming unrestricted!`, track.url);
-      }
     }
 
     function setStatus(text, badgeClass) {
