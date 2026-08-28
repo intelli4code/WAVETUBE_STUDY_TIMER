@@ -7,6 +7,7 @@ import socket
 import threading
 import webbrowser
 import subprocess
+import urllib.request
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
@@ -27,6 +28,53 @@ server_instance = None
 shutdown_requested = False
 stream_cache = {}
 
+def proxy_audio_stream(handler, stream_url):
+    """Proxy audio stream with HTTP Range support and CORS headers to enable full Web Audio API FFT."""
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        
+        # Forward Range header if browser requested a specific range (for seeking)
+        range_header = handler.headers.get('Range')
+        if range_header:
+            headers['Range'] = range_header
+
+        req = urllib.request.Request(stream_url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as upstream:
+            status_code = upstream.status or 200
+            handler.send_response(status_code)
+            
+            # Forward headers
+            content_type = upstream.headers.get('Content-Type', 'audio/webm')
+            handler.send_header('Content-Type', content_type)
+            handler.send_header('Accept-Ranges', 'bytes')
+            handler.send_header('Access-Control-Allow-Origin', '*')
+            handler.send_header('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS')
+            handler.send_header('Access-Control-Allow-Headers', 'Range, Accept-Encoding, Origin')
+            
+            if 'Content-Length' in upstream.headers:
+                handler.send_header('Content-Length', upstream.headers['Content-Length'])
+            if 'Content-Range' in upstream.headers:
+                handler.send_header('Content-Range', upstream.headers['Content-Range'])
+                
+            handler.end_headers()
+            
+            # Stream in 64KB chunks
+            while True:
+                chunk = upstream.read(65536)
+                if not chunk:
+                    break
+                try:
+                    handler.wfile.write(chunk)
+                    handler.wfile.flush()
+                except (ConnectionResetError, BrokenPipeError):
+                    break
+    except (ConnectionResetError, BrokenPipeError):
+        pass
+    except Exception as e:
+        print("Audio proxy streaming error:", e)
+
 def extract_direct_audio(youtube_id):
     """Extract direct audio stream URL using yt-dlp to bypass embedding restrictions."""
     if not HAS_YTDLP or not youtube_id:
@@ -39,9 +87,10 @@ def extract_direct_audio(youtube_id):
 
     url = f"https://www.youtube.com/watch?v={youtube_id}"
     ydl_opts = {
-        'format': 'bestaudio[ext=m4a]/bestaudio/best',
+        'format': 'bestaudio/best',
         'quiet': True,
         'no_warnings': True,
+        'noplaylist': True,
         'extract_flat': False,
         'skip_download': True
     }
@@ -50,6 +99,28 @@ def extract_direct_audio(youtube_id):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             stream_url = info.get('url')
+            
+            # If no top-level URL, search formats list for the best audio stream
+            if not stream_url and info.get('formats'):
+                # 1. Search for audio-only stream
+                audio_formats = [
+                    f for f in info['formats']
+                    if f.get('url') and (f.get('acodec') != 'none' or 'audio' in str(f.get('mimeType', '')))
+                ]
+                if audio_formats:
+                    audio_formats.sort(key=lambda f: f.get('abr') or f.get('tbr') or 0, reverse=True)
+                    stream_url = audio_formats[0]['url']
+                else:
+                    # 2. Fallback to any valid stream URL
+                    for f in reversed(info['formats']):
+                        if f.get('url'):
+                            stream_url = f['url']
+                            break
+
+            # 3. Fallback to HLS manifest URL if live stream
+            if not stream_url and info.get('manifest_url'):
+                stream_url = info['manifest_url']
+
             if stream_url:
                 result = {
                     'stream_url': stream_url,
@@ -132,10 +203,10 @@ def init_db():
         cursor.execute("SELECT COUNT(*) FROM playlist")
         if cursor.fetchone()[0] == 0:
             demo_tracks = [
-                ("jfKfPfyJRdk", "https://www.youtube.com/watch?v=jfKfPfyJRdk", "lofi hip hop radio - beats to relax/study to", "Lofi Girl", "https://img.youtube.com/vi/jfKfPfyJRdk/mqdefault.jpg", 0),
-                ("5qap5aO4i9A", "https://www.youtube.com/watch?v=5qap5aO4i9A", "Lofi Hip Hop - Chill Beats for Sleeping / Studying", "Lofi Coffee", "https://img.youtube.com/vi/5qap5aO4i9A/mqdefault.jpg", 1),
-                ("rUxyKA_-grg", "https://www.youtube.com/watch?v=rUxyKA_-grg", "Synthwave Radio - Chill Synth / Retro Beats", "Lofi Girl Synthwave", "https://img.youtube.com/vi/rUxyKA_-grg/mqdefault.jpg", 2),
-                ("4xDzrJKXOOY", "https://www.youtube.com/watch?v=4xDzrJKXOOY", "synthwave radio - chill synth / retro / electro beats", "Lofi Girl", "https://img.youtube.com/vi/4xDzrJKXOOY/mqdefault.jpg", 3)
+                ("dQw4w9WgXcQ", "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "Rick Astley - Never Gonna Give You Up (Official Music Video)", "Rick Astley", "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg", 0),
+                ("kJQP7kiw5Fk", "https://www.youtube.com/watch?v=kJQP7kiw5Fk", "Luis Fonsi - Despacito ft. Daddy Yankee", "Luis Fonsi", "https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg", 1),
+                ("4xDzrJKXOOY", "https://www.youtube.com/watch?v=4xDzrJKXOOY", "synthwave radio - chill synth / retro / electro beats", "Lofi Girl", "https://img.youtube.com/vi/4xDzrJKXOOY/mqdefault.jpg", 2),
+                ("9bZkp7q19f0", "https://www.youtube.com/watch?v=9bZkp7q19f0", "PSY - GANGNAM STYLE(강남스타일) M/V", "officialpsy", "https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg", 3)
             ]
             cursor.executemany("""
                 INSERT OR IGNORE INTO playlist (youtube_id, url, title, author, thumbnail, position)
@@ -235,17 +306,13 @@ class WaveTubeHandler(SimpleHTTPRequestHandler):
             else:
                 return self.send_json({"error": "Could not extract direct audio stream for this video."}, status=404)
 
-        # --- GET /api/stream/audio (Direct Audio Redirect / Proxy) ---
+        # --- GET /api/stream/audio (Direct Audio Stream Proxy with CORS & Range Support) ---
         if path.startswith('/api/stream/audio'):
             params = parse_qs(parsed_url.query)
             youtube_id = (params.get('v') or params.get('id') or [''])[0].strip()
             result = extract_direct_audio(youtube_id)
             if result and result.get('stream_url'):
-                self.send_response(302)
-                self.send_header('Location', result['stream_url'])
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                return
+                return proxy_audio_stream(self, result['stream_url'])
             else:
                 return self.send_json({"error": "Audio stream unavailable."}, status=404)
 
