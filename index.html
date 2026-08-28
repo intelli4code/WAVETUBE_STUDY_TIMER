@@ -292,6 +292,161 @@
       font-weight: 700 !important;
     }
 
+    /* Pro DJ Deck Styling */
+    .dj-vinyl-platter {
+      position: relative;
+      width: 175px;
+      height: 175px;
+      border-radius: 50% !important;
+      background: radial-gradient(circle at center, #000 0%, #151515 35%, #050505 50%, #1c1c1c 65%, #0a0a0a 80%, #000000 100%);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(255, 255, 255, 0.05), 0 0 0 3px #222222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      cursor: grab;
+      transition: transform 0.06s linear;
+    }
+    .dj-vinyl-platter:active {
+      cursor: grabbing;
+    }
+    .dj-vinyl-grooves {
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: repeating-radial-gradient(circle at center, transparent 0, transparent 2px, rgba(255, 255, 255, 0.035) 3px, transparent 4px);
+      pointer-events: none;
+    }
+    .dj-vinyl-sheen {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 45deg, transparent 0deg, rgba(255, 255, 255, 0.09) 60deg, transparent 120deg, transparent 180deg, rgba(255, 255, 255, 0.09) 240deg, transparent 300deg);
+      pointer-events: none;
+    }
+    .dj-vinyl-center-label {
+      position: relative;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+      z-index: 2;
+    }
+    .dj-vinyl-spindle {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #888888 60%, #222222 100%);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.8), 0 0 0 1px #333;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .dj-strobe-marker {
+      position: absolute;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 8px #ffffff;
+      z-index: 4;
+    }
+
+    /* Dual Stereo LED VU Towers */
+    .dj-vu-segment {
+      width: 100%;
+      height: 5px;
+      margin-bottom: 2px;
+      border-radius: 1px;
+      transition: background-color 0.05s ease, opacity 0.05s ease;
+    }
+    .dj-vu-seg-green { background: #00e676; opacity: 0.15; }
+    .dj-vu-seg-green.lit { opacity: 1; box-shadow: 0 0 6px rgba(0, 230, 118, 0.8); }
+    .dj-vu-seg-yellow { background: #ffd600; opacity: 0.15; }
+    .dj-vu-seg-yellow.lit { opacity: 1; box-shadow: 0 0 6px rgba(255, 214, 0, 0.8); }
+    .dj-vu-seg-red { background: #ff1744; opacity: 0.15; }
+    .dj-vu-seg-red.lit { opacity: 1; box-shadow: 0 0 8px rgba(255, 23, 68, 0.9); }
+
+    /* Performance SFX Pad */
+    .dj-pad-btn {
+      position: relative;
+      background: #0d0d0d;
+      border: 1px solid #282828;
+      border-radius: 4px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #e0e0e0;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.08s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .dj-pad-btn:hover {
+      background: #181818;
+      border-color: #555;
+      color: #fff;
+    }
+    .dj-pad-btn:active, .dj-pad-btn.pad-pressed {
+      transform: translateY(2px) scale(0.97);
+      background: #ffffff !important;
+      color: #000000 !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.8) !important;
+    }
+
+    /* Rotary Knob styling */
+    .dj-knob-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .dj-rotary-knob {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #1e1e1e 0%, #0d0d0d 100%);
+      border: 2px solid #333333;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.15);
+      position: relative;
+      cursor: ns-resize;
+      transition: border-color 0.15s;
+    }
+    .dj-rotary-knob:hover {
+      border-color: #666;
+    }
+    .dj-knob-pointer {
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      width: 2px;
+      height: 12px;
+      background: #ffffff;
+      transform: translateX(-50%);
+      border-radius: 1px;
+      box-shadow: 0 0 4px #ffffff;
+    }
+
+    /* Kick shake animation */
+    @keyframes djKickPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.008) translateY(-1px); }
+      100% { transform: scale(1); }
+    }
+    .dj-kick-thump {
+      animation: djKickPulse 0.12s ease-out;
+    }
+
     /* Toast Animation */
     .toast-anim {
       animation: toastIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -406,7 +561,9 @@
       </div>
       <div class="grid grid-cols-2 gap-2 text-xs font-mono text-neutral-300">
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">Space</span> <span class="text-neutral-400">Play / Pause</span></div>
-        <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">T</span> <span class="text-neutral-400">Toggle Desk Clock</span></div>
+        <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">D</span> <span class="text-white font-bold">Toggle DJ Deck</span></div>
+        <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">1 - 6</span> <span class="text-white font-bold">DJ Sound FX</span></div>
+        <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">T</span> <span class="text-neutral-400">Desk Clock</span></div>
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">F</span> <span class="text-neutral-400">Fullscreen</span></div>
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">N / P</span> <span class="text-neutral-400">Next / Prev</span></div>
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">← / →</span> <span class="text-neutral-400">Seek -/+ 5s</span></div>
@@ -416,7 +573,7 @@
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">L</span> <span class="text-neutral-400">Loop Mode</span></div>
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">S</span> <span class="text-neutral-400">Shuffle</span></div>
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">V</span> <span class="text-neutral-400">Toggle Video</span></div>
-        <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">B</span> <span class="text-neutral-400">Force Bypass Stream</span></div>
+        <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">B</span> <span class="text-neutral-400">Direct Bypass</span></div>
         <div class="lux-card p-2.5 flex justify-between items-center"><span class="text-white font-bold">?</span> <span class="text-neutral-400">Help</span></div>
       </div>
       <div class="text-right pt-2 border-t border-neutral-800">
@@ -515,6 +672,9 @@
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
+        <button id="djModeToggleBtn" class="btn-lux text-xs px-3 py-1.5 font-mono flex items-center gap-1.5 text-white border-neutral-500 hover:border-white transition-all" title="Toggle Pro DJ Deck Console (D)">
+          <span id="djModeIcon">🎛</span> <span id="djModeLabel">PRO DJ DECK</span>
+        </button>
         <button id="liveAudioBtn" class="btn-lux text-xs px-3 py-1.5 font-mono flex items-center gap-1.5 text-white border-neutral-500 hover:border-white" title="Enable/Disable Real-Time Audio Capture">
           <span id="liveAudioIcon">🎙</span> <span id="liveAudioLabel">ENABLE LIVE FFT</span>
         </button>
@@ -608,17 +768,64 @@
               <video id="directVideoPlayer" class="w-full h-full object-contain bg-black hidden" playsinline controls></video>
             </div>
 
-            <!-- Audio Display (Visualizer + Boxy Album Card) -->
+            <!-- Audio Display (Visualizer + Boxy Album Card + DJ Mode Turntable) -->
             <div id="audioVisualDisplay" class="w-full h-full absolute inset-0 flex flex-col items-center justify-center p-4">
               
               <!-- Real-time Realistic Multi-Band Canvas Spectrum Visualizer -->
               <canvas id="visualizerCanvas" class="absolute inset-0 w-full h-full z-0 opacity-95"></canvas>
 
-              <!-- Central Deck Boxy Artwork Card -->
-              <div class="relative z-10 flex flex-col items-center justify-center pointer-events-none">
+              <!-- Left Stereo LED VU Tower -->
+              <div id="djVuLeft" class="absolute left-2.5 top-3 bottom-3 w-3.5 hidden flex-col justify-between py-1 z-20 bg-black/80 border border-neutral-800 rounded px-0.5 pointer-events-none">
+                <!-- 12 LED Segments -->
+                <div class="dj-vu-segment dj-vu-seg-red" data-seg="11"></div>
+                <div class="dj-vu-segment dj-vu-seg-red" data-seg="10"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="9"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="8"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="7"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="6"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="5"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="4"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="3"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="2"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="1"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="0"></div>
+              </div>
+
+              <!-- Right Stereo LED VU Tower -->
+              <div id="djVuRight" class="absolute right-2.5 top-3 bottom-3 w-3.5 hidden flex-col justify-between py-1 z-20 bg-black/80 border border-neutral-800 rounded px-0.5 pointer-events-none">
+                <!-- 12 LED Segments -->
+                <div class="dj-vu-segment dj-vu-seg-red" data-seg="11"></div>
+                <div class="dj-vu-segment dj-vu-seg-red" data-seg="10"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="9"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="8"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="7"></div>
+                <div class="dj-vu-segment dj-vu-seg-yellow" data-seg="6"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="5"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="4"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="3"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="2"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="1"></div>
+                <div class="dj-vu-segment dj-vu-seg-green" data-seg="0"></div>
+              </div>
+
+              <!-- Central Deck: Standard Boxy Card vs Motorized DJ Turntable -->
+              <div class="relative z-10 flex flex-col items-center justify-center">
+                
+                <!-- Standard Studio Artwork Card -->
                 <div id="artworkRing" class="w-28 h-28 sm:w-32 sm:h-32 p-1 bg-[#0b0b0b] border border-neutral-700 shadow-2xl flex items-center justify-center overflow-hidden transition-transform duration-100">
                   <img id="trackCover" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=80"
                        alt="Cover" class="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition duration-300">
+                </div>
+
+                <!-- Motorized DJ Turntable Jog Wheel Platter (DJ Mode) -->
+                <div id="djTurntablePlatter" class="hidden dj-vinyl-platter" title="Click & Drag to Scratch Vinyl">
+                  <div class="dj-vinyl-grooves"></div>
+                  <div class="dj-vinyl-sheen"></div>
+                  <div class="dj-strobe-marker" id="djStrobeDot"></div>
+                  <div class="dj-vinyl-center-label">
+                    <img id="djVinylCover" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200" class="w-full h-full object-cover grayscale contrast-125">
+                  </div>
+                  <div class="dj-vinyl-spindle"></div>
                 </div>
                 
                 <!-- Visualizer Controls Bar -->
@@ -638,6 +845,125 @@
                   <button id="vizStyleBtn" class="text-white font-bold hover:underline">BARS (SPECTRUM) ▾</button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- DJ MODE: Live Scrolling RGB Waveform (Serato / Rekordbox Style) -->
+          <div id="djWaveformDock" class="hidden relative w-full h-11 bg-[#050505] border border-neutral-800 overflow-hidden select-none">
+            <canvas id="djWaveformCanvas" class="w-full h-full"></canvas>
+            <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-0.5 bg-red-500 shadow-[0_0_8px_#ff2222] z-10 pointer-events-none"></div>
+            <div class="absolute top-1 left-2 text-[9px] font-mono text-neutral-500 tracking-wider pointer-events-none">// SERATO RGB WAVEFLOW</div>
+            <div class="absolute top-1 right-2 text-[9px] font-mono text-white font-bold tracking-wider pointer-events-none" id="djBpmBadge">128.0 BPM</div>
+          </div>
+
+          <!-- DJ MODE: Tactile 3-Band Equalizer & Sound Color Filter Mixer Strip -->
+          <div id="djMixerConsole" class="hidden border border-neutral-800 bg-[#090909] p-3 font-mono text-xs select-none">
+            <div class="flex items-center justify-between border-b border-neutral-800 pb-2 mb-3">
+              <span class="text-[10px] text-white font-bold tracking-widest uppercase">// PRO DJ MIXER & FILTER MATRIX</span>
+              <span class="text-[10px] text-neutral-500">WEBAUDIO REAL-TIME DSP</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+              
+              <!-- LOW EQ (BASS) -->
+              <div class="dj-knob-container bg-[#050505] p-2.5 border border-neutral-800 rounded">
+                <span class="text-[10px] font-bold text-white mb-1.5">LOW (BASS)</span>
+                <div class="dj-rotary-knob mx-auto" id="djKnobLow" title="Drag Up/Down to Adjust Lows">
+                  <div class="dj-knob-pointer" id="djPointerLow"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between w-full px-1">
+                  <span class="text-[10px] text-neutral-400" id="djValLow">0 dB</span>
+                  <button id="djKillLowBtn" class="btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold">KILL</button>
+                </div>
+              </div>
+
+              <!-- MID EQ (VOCALS) -->
+              <div class="dj-knob-container bg-[#050505] p-2.5 border border-neutral-800 rounded">
+                <span class="text-[10px] font-bold text-white mb-1.5">MID (VOCAL)</span>
+                <div class="dj-rotary-knob mx-auto" id="djKnobMid" title="Drag Up/Down to Adjust Mids">
+                  <div class="dj-knob-pointer" id="djPointerMid"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between w-full px-1">
+                  <span class="text-[10px] text-neutral-400" id="djValMid">0 dB</span>
+                  <button id="djKillMidBtn" class="btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold">KILL</button>
+                </div>
+              </div>
+
+              <!-- HIGH EQ (TREBLE) -->
+              <div class="dj-knob-container bg-[#050505] p-2.5 border border-neutral-800 rounded">
+                <span class="text-[10px] font-bold text-white mb-1.5">HIGH (TREBLE)</span>
+                <div class="dj-rotary-knob mx-auto" id="djKnobHigh" title="Drag Up/Down to Adjust Highs">
+                  <div class="dj-knob-pointer" id="djPointerHigh"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between w-full px-1">
+                  <span class="text-[10px] text-neutral-400" id="djValHigh">0 dB</span>
+                  <button id="djKillHighBtn" class="btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold">KILL</button>
+                </div>
+              </div>
+
+              <!-- SOUND COLOR FILTER (HPF / LPF) -->
+              <div class="dj-knob-container bg-[#050505] p-2.5 border border-neutral-800 rounded">
+                <span class="text-[10px] font-bold text-white mb-1.5">HPF / LPF FILTER</span>
+                <div class="dj-rotary-knob mx-auto" id="djKnobFilter" title="Drag Left for LPF, Right for HPF">
+                  <div class="dj-knob-pointer" id="djPointerFilter"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between w-full px-1">
+                  <span class="text-[10px] text-neutral-400" id="djValFilter">FLAT</span>
+                  <button id="djResetFilterBtn" class="btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold">RESET</button>
+                </div>
+              </div>
+
+              <!-- MASTER TEMPO / PITCH SLIDER -->
+              <div class="dj-knob-container bg-[#050505] p-2.5 border border-neutral-800 rounded col-span-2 sm:col-span-1">
+                <span class="text-[10px] font-bold text-white mb-1.5">TEMPO PITCH</span>
+                <input type="range" id="djPitchSlider" min="-16" max="16" step="0.5" value="0" class="w-full accent-white cursor-pointer my-2">
+                <div class="flex items-center justify-between w-full px-1">
+                  <span class="text-[10px] text-neutral-400 font-bold" id="djPitchVal">0.0%</span>
+                  <button id="djResetPitchBtn" class="btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold">0.0%</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- DJ MODE: Backlit Performance RGB Launchpad (Instant SFX Triggers) -->
+          <div id="djLaunchpadConsole" class="hidden border border-neutral-800 bg-[#090909] p-3 font-mono text-xs select-none">
+            <div class="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2.5">
+              <span class="text-[10px] text-white font-bold tracking-widest uppercase">// PERFORMANCE DRUM LAUNCHPAD (HOT SFX)</span>
+              <span class="text-[10px] text-neutral-500">KEYS: [1] - [6]</span>
+            </div>
+
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              <button class="dj-pad-btn" id="sfxAirhornBtn" title="Play Airhorn SFX (1)">
+                <span class="text-base mb-1">📢</span>
+                <span>AIR HORN</span>
+                <span class="text-[9px] text-neutral-500 mt-0.5">[ 1 ]</span>
+              </button>
+              <button class="dj-pad-btn" id="sfxLaserBtn" title="Play Laser Drop SFX (2)">
+                <span class="text-base mb-1">💥</span>
+                <span>LASER DROP</span>
+                <span class="text-[9px] text-neutral-500 mt-0.5">[ 2 ]</span>
+              </button>
+              <button class="dj-pad-btn" id="sfxScratchBtn" title="Play Vinyl Scratch SFX (3)">
+                <span class="text-base mb-1">💿</span>
+                <span>SCRATCH</span>
+                <span class="text-[9px] text-neutral-500 mt-0.5">[ 3 ]</span>
+              </button>
+              <button class="dj-pad-btn" id="sfxSirenBtn" title="Play Rave Siren SFX (4)">
+                <span class="text-base mb-1">🚨</span>
+                <span>CLUB SIREN</span>
+                <span class="text-[9px] text-neutral-500 mt-0.5">[ 4 ]</span>
+              </button>
+              <button class="dj-pad-btn" id="sfxBoomBtn" title="Play 808 Sub Boom SFX (5)">
+                <span class="text-base mb-1">💣</span>
+                <span>808 BOOM</span>
+                <span class="text-[9px] text-neutral-500 mt-0.5">[ 5 ]</span>
+              </button>
+              <button class="dj-pad-btn" id="sfxStutterBtn" title="Trigger Stutter Loop (6)">
+                <span class="text-base mb-1">⚡</span>
+                <span>STUTTER</span>
+                <span class="text-[9px] text-neutral-500 mt-0.5">[ 6 ]</span>
+              </button>
             </div>
           </div>
 
@@ -888,6 +1214,7 @@
         loop_mode: "playlist",
         shuffle: false,
         videoMode: false,
+        djMode: false,
         visualizer_style: "bars",
         ambient_intensity: 0.7
       }
@@ -905,11 +1232,32 @@
     let errorRetryCount = 0;
     let editingProfileName = null;
 
-    // Web Audio API Context & Analyser Node
+    // Web Audio API Context, Analyser & Pro DJ DSP Filters
     let audioCtx = null;
     let analyserNode = null;
     let audioStream = null;
     let directAudioSource = null;
+    let djLowFilter = null;
+    let djMidFilter = null;
+    let djHighFilter = null;
+    let djColorFilter = null;
+    let djLowGain = 0;
+    let djMidGain = 0;
+    let djHighGain = 0;
+    let djColorFilterVal = 0;
+    let djPitchPercent = 0;
+    let djKillLow = false;
+    let djKillMid = false;
+    let djKillHigh = false;
+    let vinylAngle = 0;
+    let isScratching = false;
+    let scratchLastY = 0;
+    const djWaveHistory = [];
+    let djVuPeakL = 0;
+    let djVuPeakR = 0;
+    let djVuPeakHoldL = 0;
+    let djVuPeakHoldR = 0;
+
     const NUM_FFT_BINS = 64;
     const rawFreqArray = new Uint8Array(NUM_FFT_BINS);
     const rawWaveArray = new Uint8Array(128);
@@ -941,6 +1289,44 @@
       clockTimeCurrent: document.getElementById("clockTimeCurrent"),
       clockTimeDuration: document.getElementById("clockTimeDuration"),
       clockVolumeSlider: document.getElementById("clockVolumeSlider"),
+      djModeToggleBtn: document.getElementById("djModeToggleBtn"),
+      djModeIcon: document.getElementById("djModeIcon"),
+      djModeLabel: document.getElementById("djModeLabel"),
+      djVuLeft: document.getElementById("djVuLeft"),
+      djVuRight: document.getElementById("djVuRight"),
+      djTurntablePlatter: document.getElementById("djTurntablePlatter"),
+      djVinylCover: document.getElementById("djVinylCover"),
+      djStrobeDot: document.getElementById("djStrobeDot"),
+      djWaveformDock: document.getElementById("djWaveformDock"),
+      djWaveformCanvas: document.getElementById("djWaveformCanvas"),
+      djBpmBadge: document.getElementById("djBpmBadge"),
+      djMixerConsole: document.getElementById("djMixerConsole"),
+      djKnobLow: document.getElementById("djKnobLow"),
+      djPointerLow: document.getElementById("djPointerLow"),
+      djValLow: document.getElementById("djValLow"),
+      djKillLowBtn: document.getElementById("djKillLowBtn"),
+      djKnobMid: document.getElementById("djKnobMid"),
+      djPointerMid: document.getElementById("djPointerMid"),
+      djValMid: document.getElementById("djValMid"),
+      djKillMidBtn: document.getElementById("djKillMidBtn"),
+      djKnobHigh: document.getElementById("djKnobHigh"),
+      djPointerHigh: document.getElementById("djPointerHigh"),
+      djValHigh: document.getElementById("djValHigh"),
+      djKillHighBtn: document.getElementById("djKillHighBtn"),
+      djKnobFilter: document.getElementById("djKnobFilter"),
+      djPointerFilter: document.getElementById("djPointerFilter"),
+      djValFilter: document.getElementById("djValFilter"),
+      djResetFilterBtn: document.getElementById("djResetFilterBtn"),
+      djPitchSlider: document.getElementById("djPitchSlider"),
+      djPitchVal: document.getElementById("djPitchVal"),
+      djResetPitchBtn: document.getElementById("djResetPitchBtn"),
+      djLaunchpadConsole: document.getElementById("djLaunchpadConsole"),
+      sfxAirhornBtn: document.getElementById("sfxAirhornBtn"),
+      sfxLaserBtn: document.getElementById("sfxLaserBtn"),
+      sfxScratchBtn: document.getElementById("sfxScratchBtn"),
+      sfxSirenBtn: document.getElementById("sfxSirenBtn"),
+      sfxBoomBtn: document.getElementById("sfxBoomBtn"),
+      sfxStutterBtn: document.getElementById("sfxStutterBtn"),
       liveAudioBtn: document.getElementById("liveAudioBtn"),
       liveAudioIcon: document.getElementById("liveAudioIcon"),
       liveAudioLabel: document.getElementById("liveAudioLabel"),
@@ -1070,10 +1456,37 @@
     function hookDirectAudioToAnalyser() {
       try {
         const ctx = getOrCreateAudioContext();
-        if (ctx && analyserNode && !directAudioSource) {
-          directAudioSource = ctx.createMediaElementSource(directAudioEl);
-          directAudioSource.connect(analyserNode);
-          analyserNode.connect(ctx.destination);
+        if (ctx && analyserNode) {
+          if (!djLowFilter) {
+            djLowFilter = ctx.createBiquadFilter();
+            djLowFilter.type = "lowshelf";
+            djLowFilter.frequency.value = 250;
+            djLowFilter.gain.value = djKillLow ? -70 : djLowGain;
+
+            djMidFilter = ctx.createBiquadFilter();
+            djMidFilter.type = "peaking";
+            djMidFilter.frequency.value = 1000;
+            djMidFilter.Q.value = 1.0;
+            djMidFilter.gain.value = djKillMid ? -70 : djMidGain;
+
+            djHighFilter = ctx.createBiquadFilter();
+            djHighFilter.type = "highshelf";
+            djHighFilter.frequency.value = 4000;
+            djHighFilter.gain.value = djKillHigh ? -70 : djHighGain;
+
+            djColorFilter = ctx.createBiquadFilter();
+            djColorFilter.type = "allpass";
+          }
+
+          if (!directAudioSource) {
+            directAudioSource = ctx.createMediaElementSource(directAudioEl);
+            directAudioSource.connect(djLowFilter);
+            djLowFilter.connect(djMidFilter);
+            djMidFilter.connect(djHighFilter);
+            djHighFilter.connect(djColorFilter);
+            djColorFilter.connect(analyserNode);
+            analyserNode.connect(ctx.destination);
+          }
         }
       } catch (e) {
         // MediaElementSource already connected or CORS warning
@@ -1309,6 +1722,10 @@
         if (s.shuffle !== undefined) state.settings.shuffle = s.shuffle === "true";
         if (s.active_profile !== undefined) state.activeProfile = s.active_profile;
         if (s.active_index !== undefined) state.activeIndex = Math.max(0, Math.min(state.playlist.length - 1, Number(s.active_index) || 0));
+        if (s.dj_mode !== undefined) {
+          state.settings.djMode = s.dj_mode === "true";
+          applyDjModeUI();
+        }
       }
 
       dom.apiBadge.className = "border border-neutral-600 bg-neutral-900 px-3 py-1.5 text-[11px] font-mono font-bold text-white flex items-center gap-1.5";
@@ -1814,6 +2231,7 @@
       dom.trackAuthor.textContent = activeTrack.author || `ID: ${activeTrack.youtubeId}`;
       const coverUrl = activeTrack.thumbnail || ('https://img.youtube.com/vi/' + activeTrack.youtubeId + '/hqdefault.jpg');
       dom.trackCover.src = coverUrl;
+      if (dom.djVinylCover) dom.djVinylCover.src = coverUrl;
 
       // Sync Clock Overlay Mini Bar
       dom.clockActiveTrackTitle.textContent = `${activeTrack.title} — ${activeTrack.author || 'YouTube'}`;
@@ -2473,6 +2891,23 @@
         });
       }
 
+      // DJ Deck Animation Hooks
+      if (state.settings.djMode) {
+        // 1. Motorized Turntable rotation
+        if (dom.djTurntablePlatter && !isScratching) {
+          vinylAngle += (hasLiveStream || isPlaying) ? (Number(state.settings.speed || 1.0) * (2.4 + smoothedBassEnergy * 2.2)) : 0;
+          dom.djTurntablePlatter.style.transform = `rotate(${vinylAngle}deg)`;
+        }
+
+        // 2. Serato Live Scrolling RGB Waveform
+        renderDjWaveform(smoothedBassEnergy, smoothedMidEnergy, rawHighs);
+
+        // 3. Dual Stereo LED VU Towers
+        const leftLevel = Math.min(1.0, smoothedBassEnergy * 0.95 + smoothedMidEnergy * 0.35);
+        const rightLevel = Math.min(1.0, smoothedBassEnergy * 0.90 + rawHighs * 0.50);
+        renderDjVuTowers(leftLevel, rightLevel);
+      }
+
       requestAnimationFrame(renderVisualizer);
     }
     renderVisualizer();
@@ -2529,6 +2964,7 @@
       const screenW = window.innerWidth;
       const screenH = window.innerHeight;
       const dpr = window.devicePixelRatio || 1;
+      const timeSec = Date.now() * 0.001;
 
       if (intensity > 0.01) {
         // Central ambient aura pulsating smoothly with bass
@@ -2542,6 +2978,35 @@
 
         bgCtx.fillStyle = auraGrad;
         bgCtx.fillRect(0, 0, w, h);
+
+        // Sweeping Club Stage Laser Beams (DJ Mode Active)
+        if (state.settings.djMode && (isAudible || smoothedBassEnergy > 0.05)) {
+          const beamAngle1 = Math.sin(timeSec * 1.6) * 0.75;
+          const beamAngle2 = Math.cos(timeSec * 2.0) * 0.75;
+
+          bgCtx.save();
+          bgCtx.globalAlpha = Math.min(0.30, 0.05 + smoothedBassEnergy * 0.25) * intensity;
+          bgCtx.lineWidth = 2 * dpr;
+
+          // Laser 1: Electric Cyan
+          bgCtx.strokeStyle = "#00f0ff";
+          bgCtx.shadowColor = "#00f0ff";
+          bgCtx.shadowBlur = 8 * dpr;
+          bgCtx.beginPath();
+          bgCtx.moveTo(cx, 0);
+          bgCtx.lineTo(cx + Math.sin(beamAngle1) * w, h);
+          bgCtx.stroke();
+
+          // Laser 2: Red/Crimson
+          bgCtx.strokeStyle = "#ff1744";
+          bgCtx.shadowColor = "#ff1744";
+          bgCtx.beginPath();
+          bgCtx.moveTo(cx, 0);
+          bgCtx.lineTo(cx + Math.sin(beamAngle2) * w, h);
+          bgCtx.stroke();
+
+          bgCtx.restore();
+        }
 
         // Smooth expanding bass shockwaves
         for (let i = shockwaves.length - 1; i >= 0; i--) {
@@ -2731,6 +3196,464 @@
         dom.videoBtnLabel.textContent = "VIDEO";
         dom.videoModeBadge.classList.add("hidden");
       }
+    }
+
+    // =========================================================================
+    // PRO DJ DECK CONSOLE & LIVE HARDWARE CONTROLLER
+    // =========================================================================
+    function toggleDjMode(forceState = null) {
+      state.settings.djMode = (forceState !== null) ? forceState : !state.settings.djMode;
+      applyDjModeUI();
+      apiRequest("/api/settings", "POST", { dj_mode: state.settings.djMode ? "true" : "false" });
+      if (state.settings.djMode) {
+        showToast("Pro DJ Deck Activated 🎛️ (Keys: D to toggle, 1-6 for SFX)", "success");
+      } else {
+        showToast("Returned to Classic Studio Mode", "info");
+      }
+    }
+
+    function applyDjModeUI() {
+      const isDj = state.settings.djMode;
+      if (isDj) {
+        dom.djModeToggleBtn.className = "btn-lux btn-active text-xs px-3 py-1.5 font-mono flex items-center gap-1.5 shadow-md";
+        dom.djVuLeft.classList.remove("hidden");
+        dom.djVuLeft.classList.add("flex");
+        dom.djVuRight.classList.remove("hidden");
+        dom.djVuRight.classList.add("flex");
+        dom.artworkRing.classList.add("hidden");
+        dom.djTurntablePlatter.classList.remove("hidden");
+        dom.djWaveformDock.classList.remove("hidden");
+        dom.djMixerConsole.classList.remove("hidden");
+        dom.djLaunchpadConsole.classList.remove("hidden");
+
+        const cur = state.playlist[state.activeIndex];
+        if (cur && cur.thumbnail) {
+          dom.djVinylCover.src = cur.thumbnail;
+        }
+      } else {
+        dom.djModeToggleBtn.className = "btn-lux text-xs px-3 py-1.5 font-mono flex items-center gap-1.5 text-white border-neutral-500 hover:border-white transition-all";
+        dom.djVuLeft.classList.add("hidden");
+        dom.djVuLeft.classList.remove("flex");
+        dom.djVuRight.classList.add("hidden");
+        dom.djVuRight.classList.remove("flex");
+        dom.artworkRing.classList.remove("hidden");
+        dom.djTurntablePlatter.classList.add("hidden");
+        dom.djWaveformDock.classList.add("hidden");
+        dom.djMixerConsole.classList.add("hidden");
+        dom.djLaunchpadConsole.classList.add("hidden");
+      }
+    }
+
+    // 3-Band Equalizer & Filter Controls
+    function updateDjEq() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      if (djLowFilter) {
+        djLowFilter.gain.setTargetAtTime(djKillLow ? -70 : djLowGain, now, 0.05);
+      }
+      if (djMidFilter) {
+        djMidFilter.gain.setTargetAtTime(djKillMid ? -70 : djMidGain, now, 0.05);
+      }
+      if (djHighFilter) {
+        djHighFilter.gain.setTargetAtTime(djKillHigh ? -70 : djHighGain, now, 0.05);
+      }
+    }
+
+    function toggleDjKill(band) {
+      if (band === "low") {
+        djKillLow = !djKillLow;
+        dom.djKillLowBtn.className = djKillLow ? "btn-lux btn-active px-1.5 py-0.5 text-[9px] font-bold text-red-400 border-red-500" : "btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold";
+        dom.djValLow.textContent = djKillLow ? "KILL" : `${djLowGain > 0 ? "+" : ""}${djLowGain.toFixed(1)} dB`;
+      } else if (band === "mid") {
+        djKillMid = !djKillMid;
+        dom.djKillMidBtn.className = djKillMid ? "btn-lux btn-active px-1.5 py-0.5 text-[9px] font-bold text-red-400 border-red-500" : "btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold";
+        dom.djValMid.textContent = djKillMid ? "KILL" : `${djMidGain > 0 ? "+" : ""}${djMidGain.toFixed(1)} dB`;
+      } else if (band === "high") {
+        djKillHigh = !djKillHigh;
+        dom.djKillHighBtn.className = djKillHigh ? "btn-lux btn-active px-1.5 py-0.5 text-[9px] font-bold text-red-400 border-red-500" : "btn-lux px-1.5 py-0.5 text-[9px] text-neutral-400 hover:text-white font-bold";
+        dom.djValHigh.textContent = djKillHigh ? "KILL" : `${djHighGain > 0 ? "+" : ""}${djHighGain.toFixed(1)} dB`;
+      }
+      updateDjEq();
+    }
+
+    function setDjColorFilter(normVal) {
+      djColorFilterVal = normVal; // -1 (LPF 200Hz) to 0 (flat) to +1 (HPF 4000Hz)
+      if (!audioCtx || !djColorFilter) return;
+      const now = audioCtx.currentTime;
+
+      if (Math.abs(normVal) < 0.05) {
+        djColorFilter.type = "allpass";
+        dom.djValFilter.textContent = "FLAT";
+      } else if (normVal < 0) {
+        // Low-pass filter sweep (sweep from 20000Hz down to 200Hz)
+        djColorFilter.type = "lowpass";
+        const freq = 20000 * Math.pow(0.01, -normVal);
+        djColorFilter.frequency.setTargetAtTime(Math.max(100, freq), now, 0.05);
+        djColorFilter.Q.setTargetAtTime(3.0, now, 0.05);
+        dom.djValFilter.textContent = `LPF ${Math.round(freq)}Hz`;
+      } else {
+        // High-pass filter sweep (sweep from 20Hz up to 5000Hz)
+        djColorFilter.type = "highpass";
+        const freq = 20 * Math.pow(250, normVal);
+        djColorFilter.frequency.setTargetAtTime(Math.min(8000, freq), now, 0.05);
+        djColorFilter.Q.setTargetAtTime(3.0, now, 0.05);
+        dom.djValFilter.textContent = `HPF ${Math.round(freq)}Hz`;
+      }
+
+      // Rotate pointer
+      const deg = normVal * 135;
+      dom.djPointerFilter.style.transform = `translateX(-50%) rotate(${deg}deg)`;
+    }
+
+    function resetDjColorFilter() {
+      setDjColorFilter(0);
+      dom.djPointerFilter.style.transform = "translateX(-50%) rotate(0deg)";
+    }
+
+    function setDjPitch(percent) {
+      djPitchPercent = Number(percent);
+      const rate = 1.0 + (djPitchPercent / 100);
+      dom.djPitchVal.textContent = `${djPitchPercent > 0 ? "+" : ""}${djPitchPercent.toFixed(1)}%`;
+      state.settings.speed = rate;
+      if (directAudioEl) directAudioEl.playbackRate = rate;
+      if (ytReady && player && typeof player.setPlaybackRate === "function") {
+        try { player.setPlaybackRate(rate); } catch (e) {}
+      }
+      dom.djBpmBadge.textContent = `${(128 * rate).toFixed(1)} BPM`;
+    }
+
+    function resetDjPitch() {
+      dom.djPitchSlider.value = 0;
+      setDjPitch(0);
+    }
+
+    // Generic Rotary Knob Mouse Drag Controller
+    function setupRotaryKnob(knobEl, pointerEl, valEl, min, max, initial, isBipolar, onChange) {
+      let currentVal = initial;
+      let startY = 0;
+      let startVal = initial;
+      let isDragging = false;
+
+      function updateUI(val) {
+        currentVal = Math.max(min, Math.min(max, val));
+        const norm = (currentVal - min) / (max - min); // 0 to 1
+        const deg = (norm - 0.5) * 270; // -135deg to +135deg
+        pointerEl.style.transform = `translateX(-50%) rotate(${deg}deg)`;
+        if (isBipolar) {
+          valEl.textContent = `${currentVal > 0 ? "+" : ""}${currentVal.toFixed(1)} dB`;
+        }
+        onChange(currentVal);
+      }
+
+      knobEl.addEventListener("pointerdown", (e) => {
+        isDragging = true;
+        startY = e.clientY;
+        startVal = currentVal;
+        knobEl.setPointerCapture(e.pointerId);
+      });
+
+      knobEl.addEventListener("pointermove", (e) => {
+        if (!isDragging) return;
+        const deltaY = startY - e.clientY;
+        const range = max - min;
+        const newVal = startVal + (deltaY / 100) * range;
+        updateUI(newVal);
+      });
+
+      const endDrag = () => { isDragging = false; };
+      knobEl.addEventListener("pointerup", endDrag);
+      knobEl.addEventListener("pointercancel", endDrag);
+
+      // Initial visual angle
+      const initialNorm = (initial - min) / (max - min);
+      pointerEl.style.transform = `translateX(-50%) rotate(${(initialNorm - 0.5) * 270}deg)`;
+    }
+
+    // Turntable Vinyl Scratch & Dragging
+    function setupDjTurntable() {
+      const platter = dom.djTurntablePlatter;
+      if (!platter) return;
+
+      platter.addEventListener("pointerdown", (e) => {
+        isScratching = true;
+        scratchLastY = e.clientY;
+        platter.setPointerCapture(e.pointerId);
+        playVinylScratchSFX(0.4);
+      });
+
+      platter.addEventListener("pointermove", (e) => {
+        if (!isScratching) return;
+        const dy = scratchLastY - e.clientY;
+        scratchLastY = e.clientY;
+        vinylAngle += dy * 2.5;
+        platter.style.transform = `rotate(${vinylAngle}deg)`;
+
+        // Scratch audio time scrub
+        if (directAudioEl && !isNaN(directAudioEl.duration)) {
+          directAudioEl.currentTime = Math.max(0, Math.min(directAudioEl.duration, directAudioEl.currentTime + (dy * 0.08)));
+        }
+      });
+
+      const stopScratch = () => {
+        if (isScratching) {
+          isScratching = false;
+        }
+      };
+      platter.addEventListener("pointerup", stopScratch);
+      platter.addEventListener("pointercancel", stopScratch);
+    }
+
+    // =========================================================================
+    // WEBAUDIO REAL-TIME SYNTHESIZED SFX LAUNCHPAD (Zero latency)
+    // =========================================================================
+    function playAirhornSFX() {
+      const ctx = getOrCreateAudioContext();
+      if (!ctx) return;
+      highlightPad(dom.sfxAirhornBtn);
+
+      const notes = [466.16, 622.25, 932.33]; // Bb4, Eb5, Bb5 (Airhorn triad)
+      const now = ctx.currentTime;
+      const bursts = [0, 0.12, 0.24, 0.44]; // Classic 4-burst airhorn pattern
+
+      bursts.forEach(bTime => {
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = (idx === 0) ? "sawtooth" : "square";
+          osc.frequency.setValueAtTime(freq, now + bTime);
+          osc.frequency.exponentialRampToValueAtTime(freq * 1.03, now + bTime + 0.08);
+
+          gain.gain.setValueAtTime(0.001, now + bTime);
+          gain.gain.linearRampToValueAtTime(0.22, now + bTime + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + bTime + 0.10);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + bTime);
+          osc.stop(now + bTime + 0.11);
+        });
+      });
+    }
+
+    function playLaserDropSFX() {
+      const ctx = getOrCreateAudioContext();
+      if (!ctx) return;
+      highlightPad(dom.sfxLaserBtn);
+
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(2800, now);
+      osc.frequency.exponentialRampToValueAtTime(65, now + 0.42);
+
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.46);
+    }
+
+    function playVinylScratchSFX(vol = 0.5) {
+      const ctx = getOrCreateAudioContext();
+      if (!ctx) return;
+      highlightPad(dom.sfxScratchBtn);
+
+      const now = ctx.currentTime;
+      const bufferSize = ctx.sampleRate * 0.18;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.sin(i / 10);
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(600, now);
+      filter.frequency.exponentialRampToValueAtTime(3200, now + 0.08);
+      filter.frequency.exponentialRampToValueAtTime(800, now + 0.18);
+      filter.Q.value = 4.0;
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(vol * 0.6, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.19);
+    }
+
+    function playRaveSirenSFX() {
+      const ctx = getOrCreateAudioContext();
+      if (!ctx) return;
+      highlightPad(dom.sfxSirenBtn);
+
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(850, now);
+      for (let i = 0; i < 4; i++) {
+        osc.frequency.linearRampToValueAtTime(1400, now + i * 0.25 + 0.12);
+        osc.frequency.linearRampToValueAtTime(850, now + i * 0.25 + 0.25);
+      }
+
+      gain.gain.setValueAtTime(0.28, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 1.05);
+    }
+
+    function play808BoomSFX() {
+      const ctx = getOrCreateAudioContext();
+      if (!ctx) return;
+      highlightPad(dom.sfxBoomBtn);
+
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(95, now);
+      osc.frequency.exponentialRampToValueAtTime(32, now + 0.8);
+
+      gain.gain.setValueAtTime(0.65, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 1.45);
+
+      // Trigger kick thump animation
+      triggerBassShockwave();
+      dom.audioVisualDisplay.classList.remove("dj-kick-thump");
+      void dom.audioVisualDisplay.offsetWidth;
+      dom.audioVisualDisplay.classList.add("dj-kick-thump");
+    }
+
+    function triggerStutterLoop() {
+      if (!directAudioEl) return;
+      highlightPad(dom.sfxStutterBtn);
+
+      const origVol = directAudioEl.volume;
+      const startT = directAudioEl.currentTime;
+      let count = 0;
+      const interval = setInterval(() => {
+        count++;
+        directAudioEl.currentTime = startT;
+        if (count >= 6) {
+          clearInterval(interval);
+          directAudioEl.volume = origVol;
+        }
+      }, 90);
+    }
+
+    function highlightPad(btn) {
+      if (!btn) return;
+      btn.classList.add("pad-pressed");
+      setTimeout(() => btn.classList.remove("pad-pressed"), 150);
+    }
+
+    // =========================================================================
+    // SERATO LIVE SCROLLING RGB WAVEFLOW & DUAL STEREO VU TOWERS
+    // =========================================================================
+    function renderDjWaveform(bass, mids, highs) {
+      const canvas = dom.djWaveformCanvas;
+      if (!canvas || !state.settings.djMode) return;
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+
+      if (canvas.width !== canvas.clientWidth * dpr || canvas.height !== canvas.clientHeight * dpr) {
+        canvas.width = canvas.clientWidth * dpr;
+        canvas.height = canvas.clientHeight * dpr;
+      }
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const cy = h / 2;
+
+      // Add current frequency sample
+      djWaveHistory.push({ b: bass, m: mids, h: highs });
+      const maxHistory = Math.floor(w / 3);
+      if (djWaveHistory.length > maxHistory) {
+        djWaveHistory.shift();
+      }
+
+      ctx.fillStyle = "#050505";
+      ctx.fillRect(0, 0, w, h);
+
+      for (let i = 0; i < djWaveHistory.length; i++) {
+        const item = djWaveHistory[i];
+        const x = w - (djWaveHistory.length - i) * 3;
+
+        // Sub-bass height (Red)
+        const bHeight = Math.max(1, item.b * (h * 0.44));
+        ctx.fillStyle = "#ff1744";
+        ctx.fillRect(x, cy - bHeight, 2, bHeight * 2);
+
+        // Mids height (Green)
+        const mHeight = Math.max(1, item.m * (h * 0.32));
+        ctx.fillStyle = "#00e676";
+        ctx.fillRect(x, cy - mHeight, 2, mHeight * 2);
+
+        // Highs height (Cyan)
+        const hHeight = Math.max(1, item.h * (h * 0.18));
+        ctx.fillStyle = "#00f0ff";
+        ctx.fillRect(x, cy - hHeight, 2, hHeight * 2);
+      }
+    }
+
+    function renderDjVuTowers(leftLevel, rightLevel) {
+      if (!state.settings.djMode) return;
+
+      const numSegs = 12;
+      const leftIndex = Math.min(numSegs - 1, Math.floor(leftLevel * numSegs));
+      const rightIndex = Math.min(numSegs - 1, Math.floor(rightLevel * numSegs));
+
+      // Left Peak Hold
+      if (leftIndex >= djVuPeakL) {
+        djVuPeakL = leftIndex;
+        djVuPeakHoldL = 15;
+      } else {
+        if (djVuPeakHoldL > 0) djVuPeakHoldL--;
+        else djVuPeakL = Math.max(0, djVuPeakL - 1);
+      }
+
+      // Right Peak Hold
+      if (rightIndex >= djVuPeakR) {
+        djVuPeakR = rightIndex;
+        djVuPeakHoldR = 15;
+      } else {
+        if (djVuPeakHoldR > 0) djVuPeakHoldR--;
+        else djVuPeakR = Math.max(0, djVuPeakR - 1);
+      }
+
+      const leftSegs = dom.djVuLeft.querySelectorAll(".dj-vu-segment");
+      leftSegs.forEach(seg => {
+        const idx = Number(seg.dataset.seg);
+        if (idx <= leftIndex || idx === djVuPeakL) seg.classList.add("lit");
+        else seg.classList.remove("lit");
+      });
+
+      const rightSegs = dom.djVuRight.querySelectorAll(".dj-vu-segment");
+      rightSegs.forEach(seg => {
+        const idx = Number(seg.dataset.seg);
+        if (idx <= rightIndex || idx === djVuPeakR) seg.classList.add("lit");
+        else seg.classList.remove("lit");
+      });
     }
 
     function setVolume(val) {
@@ -3061,6 +3984,45 @@
       }
     });
 
+    // DJ Deck Toggle & Hardware Event Listeners
+    dom.djModeToggleBtn.onclick = () => toggleDjMode();
+
+    // 3-Band Rotary Knobs
+    setupRotaryKnob(dom.djKnobLow, dom.djPointerLow, dom.djValLow, -24, 6, 0, true, val => {
+      djLowGain = val;
+      updateDjEq();
+    });
+    setupRotaryKnob(dom.djKnobMid, dom.djPointerMid, dom.djValMid, -24, 6, 0, true, val => {
+      djMidGain = val;
+      updateDjEq();
+    });
+    setupRotaryKnob(dom.djKnobHigh, dom.djPointerHigh, dom.djValHigh, -24, 6, 0, true, val => {
+      djHighGain = val;
+      updateDjEq();
+    });
+    setupRotaryKnob(dom.djKnobFilter, dom.djPointerFilter, dom.djValFilter, -1, 1, 0, false, val => {
+      setDjColorFilter(val);
+    });
+
+    dom.djKillLowBtn.onclick = () => toggleDjKill("low");
+    dom.djKillMidBtn.onclick = () => toggleDjKill("mid");
+    dom.djKillHighBtn.onclick = () => toggleDjKill("high");
+    dom.djResetFilterBtn.onclick = () => resetDjColorFilter();
+
+    dom.djPitchSlider.addEventListener("input", (e) => setDjPitch(e.target.value));
+    dom.djResetPitchBtn.onclick = () => resetDjPitch();
+
+    // SFX Launchpad Buttons
+    dom.sfxAirhornBtn.onclick = () => playAirhornSFX();
+    dom.sfxLaserBtn.onclick = () => playLaserDropSFX();
+    dom.sfxScratchBtn.onclick = () => playVinylScratchSFX(0.7);
+    dom.sfxSirenBtn.onclick = () => playRaveSirenSFX();
+    dom.sfxBoomBtn.onclick = () => play808BoomSFX();
+    dom.sfxStutterBtn.onclick = () => triggerStutterLoop();
+
+    // Initialize interactive turntable scratch
+    setupDjTurntable();
+
     // Shortcuts Modal
     dom.shortcutsBtn.onclick = () => dom.shortcutsModal.classList.remove("hidden");
     dom.closeShortcutsBtn.onclick = () => dom.shortcutsModal.classList.add("hidden");
@@ -3081,6 +4043,20 @@
       if (e.code === "Space") {
         e.preventDefault();
         togglePlayPause();
+      } else if (e.key.toLowerCase() === "d") {
+        toggleDjMode();
+      } else if (e.key === "1") {
+        playAirhornSFX();
+      } else if (e.key === "2") {
+        playLaserDropSFX();
+      } else if (e.key === "3") {
+        playVinylScratchSFX(0.7);
+      } else if (e.key === "4") {
+        playRaveSirenSFX();
+      } else if (e.key === "5") {
+        play808BoomSFX();
+      } else if (e.key === "6") {
+        triggerStutterLoop();
       } else if (e.key.toLowerCase() === "t") {
         toggleClockMode();
       } else if (e.key.toLowerCase() === "f") {
