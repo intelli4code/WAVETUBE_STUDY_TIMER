@@ -129,22 +129,83 @@
       border: 2px solid #000000;
     }
 
-    /* Custom Scrollbar */
-    .custom-scroll::-webkit-scrollbar {
-      width: 4px;
-    }
-    .custom-scroll::-webkit-scrollbar-track {
-      background: #080808;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background: #262626;
-      border-radius: 3px !important;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb:hover {
-      background: #444444;
+    /* =========================================================================
+       LUXURY MONOCHROMATIC SCROLLBAR DESIGN (Cross-Browser & Containers)
+       ========================================================================= */
+    /* Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a2a #050505;
     }
 
-    /* Video Dock: 320x240px to satisfy YouTube viewport policy */
+    /* Chromium, Chrome, Edge, Safari Global Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #050505;
+      border-left: 1px solid #141414;
+      border-radius: 2px !important;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #242424;
+      border: 1px solid #333333;
+      border-radius: 3px !important;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4a4a4a;
+      border-color: #777777;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: #ffffff;
+      border-color: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: #050505;
+    }
+
+    /* Specialized Container Scrollbar (.custom-scroll for Playlist, Queue & Modals) */
+    .custom-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #2e2e2e #080808;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #080808;
+      border-left: 1px solid #1a1a1a;
+      border-radius: 2px !important;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #262626;
+      border: 1px solid #383838;
+      border-radius: 2px !important;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #505050;
+      border-color: #888888;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb:active {
+      background: #ffffff;
+      border-color: #ffffff;
+    }
+
+    /* Video Dock: Audio mode keeps 320x240 for policy; Video mode gives full 16:9 HD screen */
     .player-dock {
       transition: all 0.25s ease;
       border-radius: 5px !important;
@@ -161,13 +222,28 @@
       overflow: hidden;
     }
     .player-dock.video-mode {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      border: 1px solid #333333;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
-      z-index: 10;
+      position: relative !important;
+      width: 100% !important;
+      min-height: 260px !important;
+      aspect-ratio: 16 / 9 !important;
+      overflow: hidden !important;
+      border: 1px solid #333333 !important;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8) !important;
+      z-index: 25 !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      display: block !important;
+      background: #000000 !important;
+    }
+    .player-dock iframe, .player-dock #youtubePlayer, .player-dock video {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 260px !important;
+      border: none !important;
+      border-radius: 5px !important;
+    }
+    .player-dock .hidden-player {
+      display: none !important;
     }
 
     /* Studio Tactile Buttons */
@@ -520,7 +596,10 @@
             
             <!-- Video Container (Toggled or Audio mode) -->
             <div id="playerDock" class="player-dock audio-mode">
-              <div id="youtubePlayer"></div>
+              <div id="ytWrapper" class="w-full h-full">
+                <div id="youtubePlayer" class="w-full h-full"></div>
+              </div>
+              <video id="directVideoPlayer" class="w-full h-full object-contain bg-black hidden" playsinline controls></video>
             </div>
 
             <!-- Audio Display (Visualizer + Boxy Album Card) -->
@@ -884,6 +963,9 @@
       activeProfileTag: document.getElementById("activeProfileTag"),
       videoModeBadge: document.getElementById("videoModeBadge"),
       playerDock: document.getElementById("playerDock"),
+      ytWrapper: document.getElementById("ytWrapper"),
+      youtubePlayer: document.getElementById("youtubePlayer"),
+      directVideoPlayer: document.getElementById("directVideoPlayer"),
       audioVisualDisplay: document.getElementById("audioVisualDisplay"),
       toggleVideoBtn: document.getElementById("toggleVideoBtn"),
       videoBtnIcon: document.getElementById("videoBtnIcon"),
@@ -1079,6 +1161,17 @@
         
         hookDirectAudioToAnalyser();
 
+        // If in Video Mode, also stream direct HD video to directVideoPlayer
+        if (state.settings.videoMode && dom.directVideoPlayer) {
+          const proxyVideoUrl = `/api/stream/video?v=${encodeURIComponent(track.youtubeId)}`;
+          if (dom.directVideoPlayer.src !== window.location.origin + proxyVideoUrl && !dom.directVideoPlayer.src.endsWith(proxyVideoUrl)) {
+            dom.directVideoPlayer.src = proxyVideoUrl;
+          }
+          dom.directVideoPlayer.classList.remove("hidden");
+          dom.youtubePlayer.classList.add("hidden");
+          dom.directVideoPlayer.currentTime = directAudioEl.currentTime || 0;
+        }
+
         const playPromise = directAudioEl.play();
         if (playPromise !== undefined) {
           playPromise.then(() => {
@@ -1086,17 +1179,21 @@
             dom.playerEngineBadge.className = "text-[9px] bg-white text-black font-bold px-1.5 py-0.2 font-mono border border-white";
             dom.directStreamBanner.classList.remove("hidden");
             
+            if (state.settings.videoMode && dom.directVideoPlayer) {
+              dom.directVideoPlayer.play().catch(() => {});
+            }
+
             setPlayButtonState(true);
             setStatus("PLAYING (DIRECT STREAM)", "bg-white text-black font-bold border-white");
             startProgressTimer();
             updateHeaderDisplay();
             renderPlaylist();
-            showToast("Direct Stream Bypass Active! 100% Unrestricted.", "success");
+            showToast("Direct Stream Active! 100% Unrestricted Audio & Video.", "success");
           }).catch(err => {
             if (err.name === "NotAllowedError") {
               setStatus("CLICK PLAY TO START", "bg-neutral-900 text-white border-neutral-600");
               setPlayButtonState(false);
-              showToast("Click Play button to start audio playback", "info");
+              showToast("Click Play button to start playback", "info");
             } else {
               console.warn("Direct play notice:", err.message);
             }
@@ -1116,22 +1213,40 @@
       state.useDirectAudio = false;
       directAudioEl.pause();
       directAudioEl.src = "";
+      if (dom.directVideoPlayer) {
+        dom.directVideoPlayer.pause();
+        dom.directVideoPlayer.src = "";
+        dom.directVideoPlayer.classList.add("hidden");
+      }
+      dom.youtubePlayer.classList.remove("hidden");
       dom.playerEngineBadge.textContent = "YOUTUBE ENGINE";
       dom.playerEngineBadge.className = "text-[9px] bg-neutral-900 text-neutral-400 px-1.5 py-0.2 font-mono border border-neutral-800";
       dom.directStreamBanner.classList.add("hidden");
       playActiveTrack();
     }
 
-    // Direct Audio Element Event Listeners
+    // Direct Audio & Video Element Event Listeners
     directAudioEl.addEventListener("play", () => {
       setPlayButtonState(true);
       setStatus("PLAYING (DIRECT STREAM)", "bg-white text-black font-bold border-white");
       startProgressTimer();
+      if (state.settings.videoMode && dom.directVideoPlayer && dom.directVideoPlayer.src) {
+        dom.directVideoPlayer.play().catch(() => {});
+      }
     });
 
     directAudioEl.addEventListener("pause", () => {
       setPlayButtonState(false);
       setStatus("PAUSED", "bg-neutral-900 text-neutral-300 border-neutral-700");
+      if (dom.directVideoPlayer) {
+        dom.directVideoPlayer.pause();
+      }
+    });
+
+    directAudioEl.addEventListener("seeking", () => {
+      if (dom.directVideoPlayer && dom.directVideoPlayer.src) {
+        dom.directVideoPlayer.currentTime = directAudioEl.currentTime;
+      }
     });
 
     directAudioEl.addEventListener("ended", () => {
@@ -1823,27 +1938,24 @@
       track.errorCode = null;
       errorRetryCount = 0;
 
-      if (state.useDirectAudio) {
-        playViaDirectStreamBypass(state.activeIndex);
-        return;
+      // In Video Mode, try YouTube video player
+      if (state.settings.videoMode && ytReady && player) {
+        try {
+          if (typeof player.loadVideoById === "function") {
+            player.loadVideoById(track.youtubeId, 0);
+            player.playVideo();
+          } else if (typeof player.playVideo === "function") {
+            player.playVideo();
+          }
+          applySettingsToPlayer();
+          updateHeaderDisplay();
+          renderPlaylist();
+          return;
+        } catch (e) {}
       }
 
-      if (!ytReady || !player) {
-        showToast("Player initializing...", "info");
-        return;
-      }
-
-      try {
-        if (typeof player.loadVideoById === "function") {
-          player.loadVideoById(track.youtubeId, 0);
-          player.playVideo();
-        } else if (typeof player.playVideo === "function") {
-          player.playVideo();
-        }
-        applySettingsToPlayer();
-        updateHeaderDisplay();
-        renderPlaylist();
-      } catch (e) {}
+      // Default high-performance engine: Direct Stream Bypass (Zero CORS, 100% FFT, No Error 150)
+      playViaDirectStreamBypass(state.activeIndex);
     }
 
     function playTrackByIndex(idx) {
@@ -2027,25 +2139,18 @@
       if (code === 5) {
         setStatus("CLICK PLAY", "bg-neutral-900 text-white border-neutral-600");
         setPlayButtonState(false);
-        showToast("Autoplay paused. Click Play button to start.", "info");
         return;
       }
 
-      // Codes 150 / 101: Owner disabled external player embedding
-      if (code === 150 || code === 101 || code === 153 || code === 2 || code === 100) {
-        showToast(`Embedding restricted (Code ${code}). Activating Direct Stream Bypass...`, "info");
-        playViaDirectStreamBypass(state.activeIndex);
-        return;
+      // Codes 150 / 101 / 153 / 2 / 100: YouTube embed disabled by owner on external sites
+      // Automatically activate Direct Stream Bypass so audio continues seamlessly!
+      console.log(`YouTube embed restricted (Code ${code}). Falling back to Direct Stream Bypass...`);
+      playViaDirectStreamBypass(state.activeIndex);
+
+      // If user was viewing in video mode, inform them that direct audio is streaming
+      if (state.settings.videoMode) {
+        showRestriction(`Video embedding disabled by owner on external websites (Notice ${code}). Direct audio is streaming unrestricted!`, track.url);
       }
-
-      track.unavailable = true;
-      track.errorCode = code;
-      renderPlaylist();
-
-      const msg = `YouTube playback notice (${code}). Direct audio bypass available below.`;
-      showRestriction(msg, track.url);
-      setStatus(`RESTRICTED (${code})`, "bg-neutral-900 text-neutral-400 border-neutral-700");
-      setPlayButtonState(false);
     }
 
     function setStatus(text, badgeClass) {
@@ -2464,59 +2569,28 @@
           }
         }
 
-        // Particle dynamics driven by live visualizer frequencies
-        const bassThrust = isAudible ? smoothedBassEnergy * 4.0 : 0;
-        const midThrust = isAudible ? smoothedMidEnergy * 1.5 : 0;
+        // Clean floating particles whose drift speed accelerates based on visualizer graphs & bass
+        const speedMultiplier = 1.0 + (isAudible ? (smoothedBassEnergy * 7.5 + smoothedMidEnergy * 3.0) : 0);
 
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
-          
-          // Radial push from center on bass hits
-          const dx = p.x - screenW / 2;
-          const dy = p.y - screenH / 2;
-          const distFromCenter = Math.sqrt(dx * dx + dy * dy) || 1;
-          const normalX = dx / distFromCenter;
-          const normalY = dy / distFromCenter;
 
-          const speedMul = 1.0 + (p.freqBand <= 1 ? bassThrust : midThrust);
-          const pushForce = isAudible ? (smoothedBassEnergy * 1.2) : 0;
+          p.x += p.vx * speedMultiplier;
+          p.y += p.vy * speedMultiplier;
 
-          p.x += p.vx * speedMul + normalX * pushForce;
-          p.y += p.vy * speedMul + normalY * pushForce;
-
-          // Wrap edges
+          // Wrap edges smoothly
           if (p.x < 0) p.x = screenW;
           if (p.x > screenW) p.x = 0;
           if (p.y < 0) p.y = screenH;
           if (p.y > screenH) p.y = 0;
 
-          // Particle size and opacity react directly to audio
-          const sizeScale = 1.0 + (isAudible ? smoothedBassEnergy * 0.8 : 0);
+          // Natural clean particle rendering
+          const sizeScale = 1.0 + (isAudible ? smoothedBassEnergy * 0.4 : 0);
           const currentSize = p.baseSize * sizeScale * dpr;
-          const pAlpha = Math.min(1.0, (p.baseAlpha + (isAudible ? smoothedBassEnergy * 0.35 + smoothedMidEnergy * 0.15 : 0)) * intensity);
+          const pAlpha = Math.min(1.0, (p.baseAlpha + (isAudible ? smoothedBassEnergy * 0.25 : 0)) * intensity);
 
           bgCtx.fillStyle = `rgba(255, 255, 255, ${pAlpha})`;
           bgCtx.fillRect(p.x * dpr, p.y * dpr, currentSize, currentSize);
-
-          // Constellation proximity lines that flare on bass
-          if (isAudible && smoothedBassEnergy > 0.15) {
-            for (let j = i + 1; j < particles.length; j++) {
-              const p2 = particles[j];
-              const pDistX = p.x - p2.x;
-              const pDistY = p.y - p2.y;
-              const pDist = Math.sqrt(pDistX * pDistX + pDistY * pDistY);
-
-              if (pDist < 85) {
-                const lineAlpha = (1 - pDist / 85) * (0.03 + smoothedBassEnergy * 0.12) * intensity;
-                bgCtx.beginPath();
-                bgCtx.lineWidth = 1;
-                bgCtx.strokeStyle = `rgba(255, 255, 255, ${lineAlpha})`;
-                bgCtx.moveTo(p.x * dpr, p.y * dpr);
-                bgCtx.lineTo(p2.x * dpr, p2.y * dpr);
-                bgCtx.stroke();
-              }
-            }
-          }
         }
       }
 
@@ -2619,16 +2693,47 @@
     function toggleVideoMode() {
       state.settings.videoMode = !state.settings.videoMode;
       applyVideoModeUI();
+      if (state.settings.videoMode) {
+        showToast("Video Screen Active (16:9 HD)", "info");
+      } else {
+        showToast("Audio Visualizer Mode Active", "info");
+      }
     }
 
     function applyVideoModeUI() {
+      const curTrack = state.playlist[state.activeIndex];
       if (state.settings.videoMode) {
         dom.playerDock.className = "player-dock video-mode";
         dom.audioVisualDisplay.classList.add("hidden");
         dom.videoBtnIcon.textContent = "🎵";
         dom.videoBtnLabel.textContent = "AUDIO";
         dom.videoModeBadge.classList.remove("hidden");
+
+        // Hide YouTube iframe container completely so error 150 never shows
+        if (dom.ytWrapper) dom.ytWrapper.style.display = "none";
+
+        if (curTrack) {
+          const curTime = state.useDirectAudio ? (directAudioEl.currentTime || 0) : (player && player.getCurrentTime ? player.getCurrentTime() : 0);
+          
+          // Load unrestricted direct HD video stream
+          const proxyVideoUrl = `/api/stream/video?v=${encodeURIComponent(curTrack.youtubeId)}`;
+          if (dom.directVideoPlayer.src !== window.location.origin + proxyVideoUrl && !dom.directVideoPlayer.src.endsWith(proxyVideoUrl)) {
+            dom.directVideoPlayer.src = proxyVideoUrl;
+          }
+          dom.directVideoPlayer.style.display = "block";
+          dom.directVideoPlayer.classList.remove("hidden");
+          dom.directVideoPlayer.currentTime = curTime;
+          if (!directAudioEl.paused) {
+            dom.directVideoPlayer.play().catch(() => {});
+          }
+        }
       } else {
+        if (dom.directVideoPlayer) {
+          dom.directVideoPlayer.pause();
+          dom.directVideoPlayer.style.display = "none";
+          dom.directVideoPlayer.classList.add("hidden");
+        }
+        if (dom.ytWrapper) dom.ytWrapper.style.display = "block";
         dom.playerDock.className = "player-dock audio-mode";
         dom.audioVisualDisplay.classList.remove("hidden");
         dom.videoBtnIcon.textContent = "📺";

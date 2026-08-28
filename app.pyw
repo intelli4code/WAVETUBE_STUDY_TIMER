@@ -136,6 +136,74 @@ def extract_direct_audio(youtube_id):
     
     return None
 
+video_stream_cache = {}
+
+def extract_direct_video(youtube_id):
+    """Extract direct video stream URL using yt-dlp to bypass embedding restrictions."""
+    if not HAS_YTDLP or not youtube_id:
+        return None
+    
+    cached = video_stream_cache.get(youtube_id)
+    if cached and time.time() - cached.get('timestamp', 0) < 900:
+        return cached
+
+    url = f"https://www.youtube.com/watch?v={youtube_id}"
+    ydl_opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'noplaylist': True,
+        'extract_flat': False,
+        'skip_download': True
+    }
+    
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            formats = info.get('formats', [])
+            video_url = None
+            
+            # 1. Prefer H.264 (avc1/mp4v) stream up to 1080p (universally decoded by all browsers)
+            h264_formats = [
+                f for f in formats 
+                if f.get('url') and f.get('vcodec') != 'none' 
+                and ('avc1' in f.get('vcodec', '') or 'mp4v' in f.get('vcodec', ''))
+                and (f.get('height') or 0) <= 1080
+            ]
+            if h264_formats:
+                h264_formats.sort(key=lambda f: f.get('height') or 0, reverse=True)
+                video_url = h264_formats[0]['url']
+            
+            # 2. Fallback to progressive MP4
+            if not video_url:
+                for f in reversed(formats):
+                    if f.get('url') and f.get('vcodec') != 'none' and f.get('acodec') != 'none':
+                        video_url = f['url']
+                        break
+            
+            # 3. Fallback to any high-res video stream
+            if not video_url:
+                for f in reversed(formats):
+                    if f.get('url') and f.get('vcodec') != 'none':
+                        video_url = f['url']
+                        break
+            
+            if not video_url and info.get('url'):
+                video_url = info['url']
+
+            if video_url:
+                result = {
+                    'stream_url': video_url,
+                    'title': info.get('title', f"Video ({youtube_id})"),
+                    'author': info.get('uploader') or info.get('channel') or "YouTube",
+                    'duration': info.get('duration', 0),
+                    'timestamp': time.time()
+                }
+                video_stream_cache[youtube_id] = result
+                return result
+    except Exception as e:
+        print(f"Direct video stream extraction error for {youtube_id}:", e)
+    return None
+
 # ==============================================================================
 # SQLite Database Setup & Migrations
 # ==============================================================================
@@ -315,6 +383,16 @@ class WaveTubeHandler(SimpleHTTPRequestHandler):
                 return proxy_audio_stream(self, result['stream_url'])
             else:
                 return self.send_json({"error": "Audio stream unavailable."}, status=404)
+
+        # --- GET /api/stream/video (Direct Video Stream Proxy with CORS & Range Support) ---
+        if path.startswith('/api/stream/video'):
+            params = parse_qs(parsed_url.query)
+            youtube_id = (params.get('v') or params.get('id') or [''])[0].strip()
+            result = extract_direct_video(youtube_id)
+            if result and result.get('stream_url'):
+                return proxy_audio_stream(self, result['stream_url'])
+            else:
+                return self.send_json({"error": "Video stream unavailable."}, status=404)
 
         # Static files serving
         if path in ('/', ''):
